@@ -56,7 +56,7 @@ Cross-border payments on Stellar are fast, cheap, and globally accessible. But r
 - AML regulations require proof that payment amounts are under reporting thresholds
 - Jurisdiction-specific rules govern corridor eligibility (e.g. FATF compliance, VASP licensing)
 
-Today, complying with these requirements means **revealing identity on-chain** — full KYC data, wallet history, or counterparty information exposed to every node in the network. This is:
+Today, complying with these requirements means **revealing identity on-chain** full KYC data, wallet history, or counterparty information exposed to every node in the network. This is:
 
 - A **privacy risk** for individuals (especially in remittance corridors with political risk)
 - A **legal liability** for institutions handling data across jurisdictions
@@ -69,7 +69,7 @@ Today, complying with these requirements means **revealing identity on-chain** �
 zkremit introduces a **proof layer between identity and payment**:
 
 1. A trusted credential issuer (KYC provider, compliance oracle) attests to a user's compliance attributes off-chain.
-2. The user generates a **Noir zero-knowledge proof** locally in their browser — proving they hold a valid credential satisfying the required conditions, without revealing the credential itself.
+2. The user generates a **Noir zero-knowledge proof** locally in their browser proving they hold a valid credential satisfying the required conditions, without revealing the credential itself.
 3. The proof is submitted alongside the Stellar payment transaction.
 4. A **Soroban verifier contract** checks the proof on-chain using Stellar's BN254 host functions (Protocol 25/26).
 5. Only if the proof is valid does the payment proceed.
