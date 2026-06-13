@@ -764,33 +764,33 @@ async sendPayment(): Promise<void> {
 
 ## Demo Walkthrough
 
-**Scenario:** Alice in Lagos wants to send $500 USDC to her family in Manila.
+**Scenario:** Emeka in Lagos wants to send $500 USDC to her family in Manila.
 
 ```
-1. Alice opens zkremit at localhost:4200
+1. Emeka opens zkremit at localhost:4200
 
-2. She connects her Freighter wallet (G...AliceStellarAddress)
+2. He connects his Freighter wallet (G...EmekaStellarAddress)
 
-3. She selects corridor: Nigeria → Philippines, asset: USDC, amount: $500
+3. He selects corridor: Nigeria → Philippines, asset: USDC, amount: $500
 
-4. She clicks "Get Compliance Credential"
+4. He clicks "Get Compliance Credential"
    → Backend issues a mock KYC credential signed by the demo issuer
    → Credential certifies: KYC passed, not sanctioned, NG jurisdiction
 
-5. She clicks "Generate Proof"
+5. He clicks "Generate Proof"
    → Noir circuit runs in her browser (Barretenberg WASM)
    → Proves: credential valid, amount < $10,000 threshold, NG is eligible
    → Generates nullifier: Poseidon2(credentialSecret, corridorId)
    → Time: ~2 seconds on M2 MacBook / ~5 seconds on mid-range phone
 
-6. She clicks "Send Payment"
+6. He clicks "Send Payment"
    → Proof is submitted to NestJS backend
    → Backend calls Soroban verifier contract on Stellar testnet
    → Contract verifies proof using BN254 host functions (Protocol 25/26)
    → Nullifier recorded on-chain (no replay possible)
    → Stellar payment transaction submitted: 500 USDC, Alice → Maria
 
-7. Alice sees: "Payment sent ✓ | Tx: abc123... | Proof verified on-chain"
+7. Emeka sees: "Payment sent ✓ | Tx: abc123... | Proof verified on-chain"
 
 What the Stellar network sees:
   - A payment of 500 USDC
@@ -798,9 +798,9 @@ What the Stellar network sees:
   - A verified compliance event from the Soroban contract
 
 What the network does NOT see:
-  - Alice's identity
-  - Her KYC data
-  - Her jurisdiction
+  - Emeka's identity
+  - His KYC data
+  - His jurisdiction
   - That the exact amount was $500 (only that it was < $10,000)
 ```
 
