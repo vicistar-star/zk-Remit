@@ -37,7 +37,7 @@
 
 ## Overview
 
-**zkremit** is a privacy-preserving compliance layer for cross-border payments on Stellar. It allows users to prove they satisfy regulatory requirements — KYC status, AML thresholds, jurisdiction eligibility — without revealing their identity or financial details on-chain.
+**zkremit** is a privacy-preserving compliance layer for cross-border payments on Stellar. It allows users to prove they satisfy regulatory requirements — KYC status, AML thresholds, jurisdiction eligibility without revealing their identity or financial details on-chain.
 
 The project uses:
 - **Noir (Barretenberg)** to generate zero-knowledge proofs off-chain in the browser
@@ -50,7 +50,7 @@ The project uses:
 
 ## The Problem
 
-Cross-border payments on Stellar are fast, cheap, and globally accessible. But real-world corridors — remittances, B2B settlement, stablecoin rails, institutional transfers — are blocked by compliance:
+Cross-border payments on Stellar are fast, cheap, and globally accessible. But real-world corridors such as remittances, B2B settlement, stablecoin rails, institutional transfers are blocked by compliance:
 
 - Senders must prove they are not on sanctions lists
 - AML regulations require proof that payment amounts are under reporting thresholds
