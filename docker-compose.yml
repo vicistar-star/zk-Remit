@@ -1,0 +1,36 @@
+version: "3.9"
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: zkremit-postgres
+    restart: unless-stopped
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_DB: zkremit
+      POSTGRES_USER: nullcarbon
+      POSTGRES_PASSWORD: nullcarbon
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U nullcarbon -d zkremit"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: zkremit-pgadmin
+    restart: unless-stopped
+    ports:
+      - "5050:80"
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@zkremit.dev
+      PGADMIN_DEFAULT_PASSWORD: nullcarbon
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  pgdata:
