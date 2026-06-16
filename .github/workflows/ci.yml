@@ -1,0 +1,116 @@
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main, develop]
+
+jobs:
+  circuits:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install noirup
+        run: curl -L https://raw.githubusercontent.com/noir-lang/noirup/main/install | bash
+      - name: Install nargo
+        run: |
+          export PATH="$HOME/.noirup/bin:$PATH"
+          noirup
+      - name: Install bbup
+        run: curl -L https://raw.githubusercontent.com/AztecProtocol/aztec-packages/master/barretenberg/bbup/install | bash
+      - name: Install bb
+        run: |
+          export PATH="$HOME/.bbup/bin:$PATH"
+          bbup
+      - name: Cache nargo
+        uses: actions/cache@v4
+        with:
+          path: ~/.nargo
+          key: nargo-${{ hashFiles('circuits/Nargo.toml') }}
+      - name: Compile circuit
+        working-directory: circuits
+        run: nargo compile
+      - name: Run circuit tests
+        working-directory: circuits
+        run: nargo test
+
+  contracts:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install Rust toolchain
+        uses: actions-rust-lang/setup-rust-toolchain@v1
+        with:
+          target: wasm32-unknown-unknown
+      - name: Cache Cargo
+        uses: actions/cache@v4
+        with:
+          path: |
+            contracts/verifier/target
+            ~/.cargo/registry
+          key: cargo-${{ hashFiles('contracts/verifier/Cargo.lock') }}
+      - name: Build contract
+        working-directory: contracts/verifier
+        run: cargo build --target wasm32-unknown-unknown --release
+      - name: Run contract tests
+        working-directory: contracts/verifier
+        run: cargo test
+
+  backend:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_DB: zkremit
+          POSTGRES_USER: nullcarbon
+          POSTGRES_PASSWORD: nullcarbon
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 3s
+          --health-retries 5
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: backend/node_modules
+          key: backend-npm-${{ hashFiles('backend/package-lock.json') }}
+      - name: Install dependencies
+        working-directory: backend
+        run: npm ci
+      - name: Lint
+        working-directory: backend
+        run: npm run lint
+      - name: Run tests
+        working-directory: backend
+        run: npm test
+        env:
+          DATABASE_URL: postgres://nullcarbon:nullcarbon@localhost:5432/zkremit
+      - name: Build
+        working-directory: backend
+        run: npm run build
+
+  frontend:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Cache npm
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules
+          key: frontend-npm-${{ hashFiles('frontend/package-lock.json') }}
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+      - name: Build
+        working-directory: frontend
+        run: npx ng build --configuration production
