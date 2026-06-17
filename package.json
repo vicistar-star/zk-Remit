@@ -1,0 +1,21 @@
+{
+  "name": "@zkremit/zk-remit",
+  "version": "1.0.0",
+  "description": "> Zero-knowledge compliance proofs for cross-border payments, verified on-chain via Soroban using Stellar Protocol 25/26 BN254 host functions.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github-vicistar-star:vicistar-star/zk-Remit.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "dependencies": {
+    "@noble/curves": "^2.2.0",
+    "poseidon-lite": "^0.3.0"
+  }
+}
