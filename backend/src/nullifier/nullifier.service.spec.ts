@@ -1,0 +1,85 @@
+import { Test, TestingModule } from '@nestjs/testing';
+import { ConfigService } from '@nestjs/config';
+import { NullifierService } from './nullifier.service';
+import { getPool } from '../db/client';
+
+jest.mock('../db/client');
+
+describe('NullifierService', () => {
+  let service: NullifierService;
+
+  const mockQuery = jest.fn();
+
+  beforeEach(async () => {
+    (getPool as jest.Mock).mockReturnValue({
+      query: mockQuery,
+    });
+
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [
+        NullifierService,
+        {
+          provide: ConfigService,
+          useValue: {
+            get: jest.fn((key: string) => {
+              if (key === 'VERIFIER_CONTRACT_ID') return 'C123';
+              if (key === 'STELLAR_RPC_URL') return 'https://soroban-testnet.stellar.org';
+              return undefined;
+            }),
+          },
+        },
+      ],
+    }).compile();
+
+    service = module.get<NullifierService>(NullifierService);
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  describe('isValidFormat', () => {
+    it('should accept valid 66-char hex string', () => {
+      expect(service.isValidFormat('0x' + 'a'.repeat(64))).toBe(true);
+    });
+
+    it('should reject string without 0x prefix', () => {
+      expect(service.isValidFormat('a'.repeat(64))).toBe(false);
+    });
+
+    it('should reject short string', () => {
+      expect(service.isValidFormat('0xabc')).toBe(false);
+    });
+
+    it('should reject non-hex characters', () => {
+      expect(service.isValidFormat('0x' + 'z'.repeat(64))).toBe(false);
+    });
+  });
+
+  describe('isUsed', () => {
+    it('should return fresh for unknown nullifier', async () => {
+      mockQuery.mockResolvedValue({ rows: [] });
+
+      const result = await service.isUsed('0x' + 'a'.repeat(64));
+      expect(result.used).toBe(false);
+      expect(result.source).toBe('fresh');
+    });
+
+    it('should return local for DB-stored nullifier', async () => {
+      mockQuery.mockResolvedValue({ rows: [{ 1: 1 }] });
+
+      const result = await service.isUsed('0x' + 'a'.repeat(64));
+      expect(result.used).toBe(true);
+      expect(result.source).toBe('local');
+    });
+  });
+
+  describe('getCount', () => {
+    it('should return count from DB', async () => {
+      mockQuery.mockResolvedValue({ rows: [{ count: 5 }] });
+
+      const count = await service.getCount();
+      expect(count).toBe(5);
+    });
+  });
+});
