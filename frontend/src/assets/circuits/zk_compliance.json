@@ -1,0 +1,14 @@
+{
+  "noir_version": "0.36.0",
+  "hash": "0000000000000000000000000000000000000000000000000000000000000000",
+  "abi": {
+    "parameters": [],
+    "param_witnesses": {},
+    "return_type": null,
+    "return_witnesses": []
+  },
+  "bytecode": "H4sIAAAAAAAA/6vmUlBQqOUCAgAAAP//AAAAAP//",
+  "debug_symbols": "AAAAAQAAAAEAAAABAAAA",
+  "file_map": {},
+  "names": []
+}
