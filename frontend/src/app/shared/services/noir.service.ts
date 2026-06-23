@@ -66,6 +66,10 @@ export class NoirService {
     return window.innerWidth < 768 || /Mobi|Android/i.test(navigator.userAgent);
   }
 
+  shouldUseWorker(): boolean {
+    return this.detectMobile() || (navigator as any).hardwareConcurrency <= 2;
+  }
+
   async initialize(): Promise<void> {
     this.progressSubject.next({
       stage: 'loading',
@@ -89,6 +93,13 @@ export class NoirService {
   }
 
   async generateProof(inputs: CircuitInputs): Promise<ProofResult> {
+    if (this.shouldUseWorker()) {
+      this.useWorker.set(true);
+      return this.generateProofInWorker(inputs);
+    }
+
+    this.useWorker.set(false);
+
     if (!this._isReady()) {
       await this.initialize();
     }
@@ -138,6 +149,55 @@ export class NoirService {
       constraintCount: 4312,
       nullifier: publicInputs['nullifier'] || '',
     };
+  }
+
+  private async generateProofInWorker(inputs: CircuitInputs): Promise<ProofResult> {
+    const circuitJson = await lastValueFrom(
+      this.http.get<any>('assets/circuits/zk_compliance.json')
+    );
+
+    return new Promise<ProofResult>((resolve, reject) => {
+      const worker = new Worker(
+        new URL('../workers/proof.worker.ts', import.meta.url),
+        { type: 'module' }
+      );
+
+      worker.onmessage = (e: MessageEvent) => {
+        const msg = e.data;
+
+        switch (msg.type) {
+          case 'PROGRESS':
+            this.progressSubject.next({
+              stage: msg.stage,
+              percent: msg.percent,
+              message: msg.message,
+              elapsedMs: msg.elapsedMs,
+            });
+            break;
+
+          case 'PROOF_DONE':
+            worker.terminate();
+            resolve(msg.result);
+            break;
+
+          case 'PROOF_ERROR':
+            worker.terminate();
+            reject(new Error(msg.error));
+            break;
+        }
+      };
+
+      worker.onerror = (err) => {
+        worker.terminate();
+        reject(new Error('Web Worker error: ' + err.message));
+      };
+
+      worker.postMessage({
+        type: 'GENERATE_PROOF',
+        inputs,
+        circuitJson,
+      });
+    });
   }
 
   computeNullifier(credentialSecret: string, corridorId: string): string {
