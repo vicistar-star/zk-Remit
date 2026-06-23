@@ -10,16 +10,16 @@ import { WalletConnectComponent } from './features/wallet/wallet-connect.compone
     <div class="min-h-screen bg-[#0f172a] text-white">
       <nav class="flex items-center justify-between border-b border-gray-800 px-4 py-3 md:px-8">
         <span class="text-xl font-bold text-white">zkremit</span>
-        <div class="flex items-center gap-4">
+        <div class="flex items-center gap-3 md:gap-4">
           <a
             routerLink="/send"
             routerLinkActive="text-green-400"
-            class="text-sm text-gray-400 transition-colors hover:text-white"
+            class="text-xs text-gray-400 transition-colors hover:text-white md:text-sm"
           >Send</a>
           <a
             routerLink="/history"
             routerLinkActive="text-green-400"
-            class="text-sm text-gray-400 transition-colors hover:text-white"
+            class="text-xs text-gray-400 transition-colors hover:text-white md:text-sm"
           >History</a>
           <app-wallet-connect />
         </div>

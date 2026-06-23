@@ -100,7 +100,7 @@ const CORRIDORS = [
           <p class="text-sm text-gray-400">
             Valid until: {{ formatExpiry(c.expiry) }}
           </p>
-          <div class="mt-3 grid grid-cols-2 gap-2 text-xs text-gray-400">
+          <div class="mt-3 grid grid-cols-1 gap-2 text-xs text-gray-400 md:grid-cols-2">
             <span>Issuer: mock-issuer</span>
             <span>Corridor: {{ c.corridorId }}</span>
             <span>Jurisdiction: {{ c.jurisdictionCode }}</span>

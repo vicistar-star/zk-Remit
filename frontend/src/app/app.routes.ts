@@ -12,31 +12,10 @@ export const routes: Routes = [
       ),
   },
   {
-    path: 'wallet',
+    path: 'history',
     loadComponent: () =>
-      import('./features/wallet/wallet-connect.component').then(
-        (c) => c.WalletConnectComponent
-      ),
-  },
-  {
-    path: 'credential',
-    loadComponent: () =>
-      import('./features/credential/credential-fetch.component').then(
-        (c) => c.CredentialFetchComponent
-      ),
-  },
-  {
-    path: 'proof',
-    loadComponent: () =>
-      import('./features/proof/proof-generate.component').then(
-        (c) => c.ProofGenerateComponent
-      ),
-  },
-  {
-    path: 'payment',
-    loadComponent: () =>
-      import('./features/payment/payment-send.component').then(
-        (c) => c.PaymentSendComponent
+      import('./features/payment/payment-history.component').then(
+        (c) => c.PaymentHistoryComponent
       ),
   },
   { path: '**', redirectTo: '/send' },
