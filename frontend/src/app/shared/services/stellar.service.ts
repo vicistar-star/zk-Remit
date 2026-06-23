@@ -81,8 +81,9 @@ export class StellarService {
       })
     );
 
-    const freighter = await import('@stellar/freighter-api');
-    const signedRes = await freighter.signTransaction(xdr.unsignedXdr, {
+      const unsignedXdr = typeof xdr === 'string' ? xdr : xdr.unsignedXdr;
+      const freighter = await import('@stellar/freighter-api');
+    const signedRes = await freighter.signTransaction(unsignedXdr, {
       networkPassphrase:
         environment.stellarNetwork === 'testnet'
           ? 'Test SDF Network ; September 2015'
