@@ -23,6 +23,11 @@ export class PaymentController {
     return this.paymentService.buildUnsignedPaymentXdr(dto);
   }
 
+  @Get('payment/history')
+  async getHistory() {
+    return this.paymentService.getHistory();
+  }
+
   @Get('health')
   async health() {
     return {

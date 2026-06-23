@@ -62,7 +62,7 @@ export class PaymentService {
     }
   }
 
-  async buildUnsignedPaymentXdr(dto: BuildPaymentDto): Promise<string> {
+  async buildUnsignedPaymentXdr(dto: BuildPaymentDto): Promise<{ unsignedXdr: string }> {
     try {
       const { TransactionBuilder, Operation, Asset, Memo, Horizon } = await import('@stellar/stellar-sdk');
 
@@ -97,11 +97,19 @@ export class PaymentService {
         .build();
 
       const xdr = tx.toEnvelope().toXDR('base64');
-      return xdr;
+      return { unsignedXdr: xdr };
     } catch (err: any) {
       this.logger.error(`Build unsigned XDR failed: ${err.message}`);
       throw err;
     }
+  }
+
+  async getHistory(): Promise<any[]> {
+    const pool = getPool();
+    const { rows } = await pool.query(
+      'SELECT * FROM payments ORDER BY created_at DESC LIMIT 50'
+    );
+    return rows;
   }
 
   async getSep31AnchorInfo(corridorId: string): Promise<Sep31AnchorInfo> {
