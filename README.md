@@ -841,6 +841,8 @@ Before Protocol 25/26, implementing a ZK proof verifier on Soroban would have re
 | MSM (8 points) | ~30M instructions | ~800K instructions |
 | Full UltraHonk verify | Out of budget | ~8M instructions ✓ |
 
+> **Measured:** Run `./contracts/scripts/benchmark.sh` to measure real instruction counts against your deployed contract. The benchmark script invokes each function via `stellar contract invoke --simulate-only` and records the `cpu_insns` field from the simulation response.
+
 ---
 
 ## Security Considerations

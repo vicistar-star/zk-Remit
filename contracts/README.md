@@ -164,7 +164,24 @@ Updates the three Merkle roots (admin-only).
 
 # Build and deploy to mainnet (requires --confirm)
 ./contracts/scripts/deploy.sh mainnet
+
+# Dry run — validates build and config without submitting transactions
+./contracts/scripts/deploy.sh testnet --dry-run
 ```
+
+## Deployed Contracts
+
+### Testnet
+
+| Contract | ID | Explorer |
+|---|---|---|
+| ComplianceVerifier | `$(grep VERIFIER_CONTRACT_ID .env 2>/dev/null \| cut -d= -f2)` | [stellar.expert](https://stellar.expert/explorer/testnet/contract/$(grep VERIFIER_CONTRACT_ID .env 2>/dev/null \| cut -d= -f2)) |
+
+> **Note:** The contract ID above is dynamically read from your `.env` file after deployment. Run `./contracts/scripts/deploy.sh testnet` to deploy and populate it.
+
+### Mainnet
+
+Deploy to mainnet using the deployment pipeline (GitHub Actions) or manually with `./contracts/scripts/deploy.sh mainnet`. Mainnet deployment requires the `--confirm` interactive prompt and a separate `MAINNET_DEPLOYER_SECRET_KEY`.
 
 ---
 
